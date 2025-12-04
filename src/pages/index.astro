@@ -4,8 +4,8 @@ import Logo from '../components/Logo.astro';
 ---
 
 <BaseLayout title="Coming Soon" description="Family subscription tracking made simple. Track, manage, and optimize your household subscriptions together.">
-  <main class="min-h-screen flex flex-col items-center justify-center px-6 sm:px-8 lg:px-12 py-20 sm:py-24 lg:py-32">
-    <div class="w-full max-w-5xl mx-auto">
+  <main class="min-h-screen flex flex-col items-center justify-center page-padding py-20 sm:py-24 lg:py-32">
+    <div class="w-full max-w-5xl mx-auto content-padding">
 
       <!-- Hero Section -->
       <div class="text-center hero-spacing">
@@ -36,7 +36,7 @@ import Logo from '../components/Logo.astro';
       </div>
 
       <!-- Features Preview -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 px-4 sm:px-0 features-spacing">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 features-spacing">
         <div class="surface elevation-2 rounded-3xl text-center hover:elevation-3 transition-all card-padding">
           <div class="feature-icon rounded-full bg-[var(--color-primary-container)] dark:bg-[var(--color-primary-container-dark)] flex items-center justify-center">
             <svg class="w-8 h-8 text-[var(--color-primary)] dark:text-[var(--color-primary-dark)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,6 +146,36 @@ import Logo from '../components/Logo.astro';
   /* Smooth transitions */
   a, button {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Page padding */
+  .page-padding {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .content-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .page-padding {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+
+    .content-padding {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .page-padding {
+      padding-left: 3rem;
+      padding-right: 3rem;
+    }
   }
 
   /* Desktop spacing (default) */

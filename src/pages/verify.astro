@@ -16,8 +16,8 @@ const hasServerError = !!error;
   title="Email Verification"
   description="Email verification for Subscripto account"
 >
-  <div class="min-h-screen flex flex-col items-center justify-center px-6 sm:px-8 py-20">
-    <div class="w-full max-w-2xl mx-auto text-center">
+  <div class="min-h-screen flex flex-col items-center justify-center page-padding py-20">
+    <div class="w-full max-w-2xl mx-auto text-center content-padding">
 
       <!-- Logo -->
       <div class="logo-spacing">
@@ -169,6 +169,17 @@ const hasServerError = !!error;
 </BaseLayout>
 
 <style>
+  /* Page padding */
+  .page-padding {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .content-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   /* Desktop spacing (default) */
   .logo-spacing {
     margin-bottom: 5rem;
