@@ -2,19 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Logo from '../components/Logo.astro';
 
-// Get query parameters from Supabase redirect
+// Server-side: Check for error query parameters (Supabase sends errors as query params)
 const url = Astro.url;
-const token = url.searchParams.get('token');
-const type = url.searchParams.get('type');
 const error = url.searchParams.get('error');
 const errorDescription = url.searchParams.get('error_description');
 
-const isSuccess = !error && token;
-const isError = !!error;
+// If there's an error in query params, show error state
+// Otherwise, we need to check hash fragment client-side
+const hasServerError = !!error;
 ---
 
 <BaseLayout
-  title={isSuccess ? 'Email Verified' : 'Verification Failed'}
+  title="Email Verification"
   description="Email verification for Subscripto account"
 >
   <div class="min-h-screen flex flex-col items-center justify-center px-6 sm:px-8 lg:px-12 py-20 sm:py-24 lg:py-32">
@@ -25,127 +24,143 @@ const isError = !!error;
         <Logo size="medium" />
       </div>
 
-      {isSuccess ? (
-        <!-- Success State -->
-        <div class="surface elevation-2 rounded-3xl p-10 sm:p-12 lg:p-14 space-y-8 text-center">
-          <!-- Success Icon -->
-          <div class="flex justify-center">
-            <div class="w-24 h-24 rounded-full bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] flex items-center justify-center elevation-1">
-              <svg
-                class="w-14 h-14 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="3"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-          </div>
-
-          <!-- Success Message -->
-          <div class="space-y-4">
-            <h1 class="headline-medium">
-              Email Verified!
-            </h1>
-            <p class="title-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed">
-              Your email has been successfully confirmed.
-            </p>
-          </div>
-
-          <!-- Instructions -->
-          <div class="space-y-6 pt-6">
-            <p class="body-large text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed">
-              You can now close this page and return to the Subscripto app to continue setting up your account.
-            </p>
-
-            <!-- Open App Button -->
-            <button
-              id="openAppBtn"
-              class="w-full px-8 py-5 bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-white rounded-full title-medium hover:opacity-90 transition-all elevation-1 hover:elevation-2 flex items-center justify-center gap-3"
-            >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
-              Open Subscripto App
-            </button>
-
-            <!-- Fallback Link -->
-            <p class="body-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)]">
-              App not installed?{' '}
-              <a
-                href="/"
-                class="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:underline font-medium"
-              >
-                Download here
-              </a>
-            </p>
+      <!-- Loading State (shown while checking hash fragment) -->
+      <div id="loading-state" class="surface elevation-2 rounded-3xl p-10 sm:p-12 lg:p-14 space-y-8 text-center" style={hasServerError ? 'display: none;' : ''}>
+        <div class="flex justify-center">
+          <div class="w-24 h-24 rounded-full bg-[var(--color-surface-variant)] dark:bg-[var(--color-surface-variant-dark)] flex items-center justify-center elevation-1 animate-pulse">
+            <svg class="w-14 h-14 text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
           </div>
         </div>
-      ) : (
-        <!-- Error State -->
-        <div class="surface elevation-2 rounded-3xl p-10 sm:p-12 lg:p-14 space-y-8 text-center">
-          <!-- Error Icon -->
-          <div class="flex justify-center">
-            <div class="w-24 h-24 rounded-full bg-[var(--color-error)] dark:bg-[var(--color-error-dark)] flex items-center justify-center elevation-1">
-              <svg
-                class="w-14 h-14 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                />
-              </svg>
-            </div>
+        <div class="space-y-4">
+          <h1 class="headline-medium">Verifying...</h1>
+          <p class="title-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed">
+            Please wait while we confirm your email.
+          </p>
+        </div>
+      </div>
+
+      <!-- Success State -->
+      <div id="success-state" class="surface elevation-2 rounded-3xl p-10 sm:p-12 lg:p-14 space-y-8 text-center" style="display: none;">
+        <!-- Success Icon -->
+        <div class="flex justify-center">
+          <div class="w-24 h-24 rounded-full bg-[var(--color-secondary)] dark:bg-[var(--color-secondary-dark)] flex items-center justify-center elevation-1">
+            <svg
+              class="w-14 h-14 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="3"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
           </div>
+        </div>
 
-          <!-- Error Message -->
-          <div class="space-y-4">
-            <h1 class="headline-medium">
-              Verification Failed
-            </h1>
-            <p class="title-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed">
-              {errorDescription || error || 'Something went wrong. Please try again.'}
-            </p>
-          </div>
+        <!-- Success Message -->
+        <div class="space-y-4">
+          <h1 class="headline-medium">
+            Email Verified!
+          </h1>
+          <p class="title-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed">
+            Your email has been successfully confirmed.
+          </p>
+        </div>
 
-          <!-- Error Actions -->
-          <div class="space-y-6 pt-6">
-            <p class="body-large text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed">
-              This verification link may have expired or already been used.
-            </p>
+        <!-- Instructions -->
+        <div class="space-y-6 pt-6">
+          <p class="body-large text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed">
+            You can now close this page and return to the Subscripto app to continue setting up your account.
+          </p>
 
+          <!-- Open App Button -->
+          <button
+            id="openAppBtn"
+            class="w-full px-8 py-5 bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-white rounded-full title-medium hover:opacity-90 transition-all elevation-1 hover:elevation-2 flex items-center justify-center gap-3"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
+            Open Subscripto App
+          </button>
+
+          <!-- Fallback Link -->
+          <p class="body-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)]">
+            App not installed?{' '}
             <a
               href="/"
-              class="inline-flex items-center justify-center w-full px-8 py-5 bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-white rounded-full title-medium hover:opacity-90 transition-all elevation-1 hover:elevation-2 gap-3"
+              class="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:underline font-medium"
             >
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-              Return to Home
+              Download here
             </a>
+          </p>
+        </div>
+      </div>
 
-            <p class="body-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)]">
-              Need help?{' '}
-              <a
-                href="mailto:hello@subscripto.io"
-                class="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:underline font-medium"
-              >
-                Contact support
-              </a>
-            </p>
+      <!-- Error State -->
+      <div id="error-state" class="surface elevation-2 rounded-3xl p-10 sm:p-12 lg:p-14 space-y-8 text-center" style={hasServerError ? '' : 'display: none;'}>
+        <!-- Error Icon -->
+        <div class="flex justify-center">
+          <div class="w-24 h-24 rounded-full bg-[var(--color-error)] dark:bg-[var(--color-error-dark)] flex items-center justify-center elevation-1">
+            <svg
+              class="w-14 h-14 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
           </div>
         </div>
-      )}
+
+        <!-- Error Message -->
+        <div class="space-y-4">
+          <h1 class="headline-medium">
+            Verification Failed
+          </h1>
+          <p id="error-message" class="title-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed">
+            {errorDescription || error || 'Something went wrong. Please try again.'}
+          </p>
+        </div>
+
+        <!-- Error Actions -->
+        <div class="space-y-6 pt-6">
+          <p class="body-large text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed">
+            This verification link may have expired or already been used.
+          </p>
+
+          <a
+            href="/"
+            class="inline-flex items-center justify-center w-full px-8 py-5 bg-[var(--color-primary)] dark:bg-[var(--color-primary-dark)] text-white rounded-full title-medium hover:opacity-90 transition-all elevation-1 hover:elevation-2 gap-3"
+          >
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            </svg>
+            Return to Home
+          </a>
+
+          <p class="body-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)]">
+            Need help?{' '}
+            <a
+              href="mailto:hello@subscripto.io"
+              class="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:underline font-medium"
+            >
+              Contact support
+            </a>
+          </p>
+        </div>
+      </div>
 
       <!-- Footer -->
       <footer class="pt-16 text-center">
@@ -157,24 +172,87 @@ const isError = !!error;
   </div>
 </BaseLayout>
 
-<script define:vars={{ isSuccess, token }}>
-  if (isSuccess) {
+<script>
+  // Parse hash fragment from URL (Supabase sends tokens in hash)
+  function parseHashFragment() {
+    const hash = window.location.hash.substring(1); // Remove the '#'
+    if (!hash) return null;
+
+    const params: Record<string, string> = {};
+    hash.split('&').forEach(pair => {
+      const [key, value] = pair.split('=');
+      if (key && value) {
+        params[decodeURIComponent(key)] = decodeURIComponent(value);
+      }
+    });
+    return params;
+  }
+
+  // Check verification status from hash fragment
+  function checkVerificationStatus() {
+    const loadingState = document.getElementById('loading-state');
+    const successState = document.getElementById('success-state');
+    const errorState = document.getElementById('error-state');
+    const errorMessage = document.getElementById('error-message');
+
+    // If error state is already visible (server-side error), don't check hash
+    if (errorState && errorState.style.display !== 'none') {
+      if (loadingState) loadingState.style.display = 'none';
+      return;
+    }
+
+    const params = parseHashFragment();
+
+    // Check for success: access_token present and type is signup/email
+    const isSuccess = params && params.access_token &&
+      (params.type === 'signup' || params.type === 'email' || params.type === 'magiclink');
+
+    // Check for error in hash
+    const hasError = params && params.error;
+
+    if (loadingState) loadingState.style.display = 'none';
+
+    if (isSuccess) {
+      if (successState) successState.style.display = '';
+      if (errorState) errorState.style.display = 'none';
+
+      // Update page title
+      document.title = 'Email Verified | Subscripto';
+
+      // Setup app opening functionality
+      setupAppOpening(params.access_token);
+    } else {
+      if (successState) successState.style.display = 'none';
+      if (errorState) errorState.style.display = '';
+
+      // Update error message if there's one in the hash
+      if (hasError && errorMessage) {
+        const description = params.error_description || params.error || 'Something went wrong. Please try again.';
+        errorMessage.textContent = description;
+      }
+
+      // Update page title
+      document.title = 'Verification Failed | Subscripto';
+    }
+  }
+
+  function setupAppOpening(accessToken: string) {
     const openAppBtn = document.getElementById('openAppBtn');
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-    // Handle app opening
     function openApp() {
-      const deepLink = `subscripto://verify?token=${encodeURIComponent(token || '')}`;
+      // Create deep link with the access token
+      const deepLink = `subscripto://auth/callback#access_token=${encodeURIComponent(accessToken)}`;
 
       // Attempt to open the app
       window.location.href = deepLink;
 
-      // Fallback: If app doesn't open after 2 seconds, redirect to home/app store
+      // Fallback: If app doesn't open after 2 seconds, show message
       if (isMobile) {
         setTimeout(() => {
           if (document.visibilityState === 'visible') {
-            // App didn't open, redirect to home page
-            window.location.href = '/';
+            // App didn't open - user might not have it installed
+            // Don't redirect, let them use the download link
           }
         }, 2000);
       }
@@ -185,11 +263,18 @@ const isError = !!error;
       openAppBtn.addEventListener('click', openApp);
     }
 
-    // Auto-open app after 3 seconds on mobile
+    // Auto-open app after 2 seconds on mobile
     if (isMobile) {
       setTimeout(() => {
         openApp();
-      }, 3000);
+      }, 2000);
     }
+  }
+
+  // Run on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkVerificationStatus);
+  } else {
+    checkVerificationStatus();
   }
 </script>
