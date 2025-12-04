@@ -50,8 +50,8 @@ const privacyHtml = markdownToHtml(privacyMd);
     </header>
 
     <!-- Privacy Policy Content -->
-    <main class="max-w-4xl mx-auto px-6 py-12">
-      <article class="prose prose-lg dark:prose-invert max-w-none privacy-content">
+    <main class="max-w-3xl mx-auto px-6 py-12">
+      <article class="privacy-content">
         <Fragment set:html={privacyHtml} />
       </article>
 
@@ -75,12 +75,14 @@ const privacyHtml = markdownToHtml(privacyMd);
 <style>
   .privacy-content {
     line-height: 1.8;
+    font-size: 1rem;
   }
 
   .privacy-content h1 {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: 700;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
     color: var(--color-primary);
   }
 
@@ -91,10 +93,12 @@ const privacyHtml = markdownToHtml(privacyMd);
   }
 
   .privacy-content h2 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 600;
-    margin-top: 3rem;
+    margin-top: 2.5rem;
     margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-primary-container);
     color: var(--color-on-background);
     scroll-margin-top: 2rem;
   }
@@ -102,26 +106,28 @@ const privacyHtml = markdownToHtml(privacyMd);
   @media (prefers-color-scheme: dark) {
     .privacy-content h2 {
       color: var(--color-on-background-dark);
+      border-bottom-color: var(--color-primary-container-dark);
     }
   }
 
   .privacy-content h3 {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 600;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     margin-bottom: 0.75rem;
-    color: var(--color-on-background);
+    color: var(--color-primary);
   }
 
   @media (prefers-color-scheme: dark) {
     .privacy-content h3 {
-      color: var(--color-on-background-dark);
+      color: var(--color-primary-dark);
     }
   }
 
   .privacy-content p {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
     color: var(--color-on-background);
+    opacity: 0.9;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -133,6 +139,7 @@ const privacyHtml = markdownToHtml(privacyMd);
   .privacy-content strong {
     font-weight: 600;
     color: var(--color-on-background);
+    opacity: 1;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -144,10 +151,11 @@ const privacyHtml = markdownToHtml(privacyMd);
   .privacy-content a {
     color: var(--color-primary);
     text-decoration: underline;
+    transition: opacity 0.2s;
   }
 
   .privacy-content a:hover {
-    opacity: 0.8;
+    opacity: 0.7;
   }
 
   @media (prefers-color-scheme: dark) {
@@ -157,7 +165,7 @@ const privacyHtml = markdownToHtml(privacyMd);
   }
 
   .privacy-content hr {
-    margin: 2rem 0;
+    margin: 2.5rem 0;
     border: none;
     border-top: 1px solid rgba(0, 0, 0, 0.1);
   }
@@ -168,6 +176,11 @@ const privacyHtml = markdownToHtml(privacyMd);
     }
   }
 
+  /* Add spacing between sections */
+  .privacy-content > *:first-child {
+    margin-top: 0;
+  }
+
   /* Print styles */
   @media print {
     header {
@@ -175,8 +188,37 @@ const privacyHtml = markdownToHtml(privacyMd);
     }
 
     .privacy-content {
-      font-size: 12pt;
+      font-size: 11pt;
       line-height: 1.6;
+    }
+
+    .privacy-content h1 {
+      font-size: 18pt;
+    }
+
+    .privacy-content h2 {
+      font-size: 14pt;
+      page-break-after: avoid;
+    }
+
+    .privacy-content h3 {
+      font-size: 12pt;
+      page-break-after: avoid;
+    }
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .privacy-content h1 {
+      font-size: 1.75rem;
+    }
+
+    .privacy-content h2 {
+      font-size: 1.25rem;
+    }
+
+    .privacy-content h3 {
+      font-size: 1rem;
     }
   }
 </style>
