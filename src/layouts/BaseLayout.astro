@@ -13,7 +13,7 @@ const {
   ogImage = '/logo.png'
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, 'https://subscripto.io');
+const canonicalURL = new URL(Astro.url.pathname, 'https://subscriptin.com');
 ---
 
 <!DOCTYPE html>
@@ -25,21 +25,21 @@ const canonicalURL = new URL(Astro.url.pathname, 'https://subscripto.io');
     <link rel="canonical" href={canonicalURL} />
 
     <!-- Primary Meta Tags -->
-    <title>{title} | Subscripto</title>
-    <meta name="title" content={`${title} | Subscripto`} />
+    <title>{title} | Subscriptin</title>
+    <meta name="title" content={`${title} | Subscriptin`} />
     <meta name="description" content={description} />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:title" content={`${title} | Subscripto`} />
+    <meta property="og:title" content={`${title} | Subscriptin`} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={canonicalURL} />
-    <meta property="twitter:title" content={`${title} | Subscripto`} />
+    <meta property="twitter:title" content={`${title} | Subscriptin`} />
     <meta property="twitter:description" content={description} />
     <meta property="twitter:image" content={ogImage} />
 

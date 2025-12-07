@@ -3,73 +3,61 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Logo from '../components/Logo.astro';
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { marked } from 'marked';
+
+// Configure marked options
+marked.setOptions({
+  gfm: true, // GitHub Flavored Markdown
+  breaks: false,
+});
 
 // Read and parse the privacy policy markdown
 const privacyMd = await readFile(join(process.cwd(), 'src/content/privacy.md'), 'utf-8');
-
-// Simple markdown to HTML conversion for headings and paragraphs
-function markdownToHtml(md: string): string {
-  return md
-    // H2 headers
-    .replace(/^## (.+)$/gm, '<h2 id="$1">$1</h2>')
-    // H3 headers
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    // Bold text
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
-    // Paragraphs
-    .replace(/^([^<\n#*-].+)$/gm, '<p>$1</p>')
-    // Line breaks
-    .replace(/\n\n/g, '\n')
-    // Horizontal rules
-    .replace(/^---$/gm, '<hr />');
-}
-
-const privacyHtml = markdownToHtml(privacyMd);
+const privacyHtml = marked.parse(privacyMd);
 ---
 
 <BaseLayout
   title="Privacy Policy"
-  description="Subscripto Privacy Policy - Learn how we collect, use, and protect your subscription tracking data."
+  description="Subscriptin Privacy Policy - Learn how we collect, use, and protect your subscription tracking data."
 >
-  <div class="min-h-screen">
+  <div class="min-h-screen" style="width: 100%;">
     <!-- Header -->
-    <header class="surface elevation-1 sticky top-0 z-10">
-      <div class="max-w-5xl mx-auto page-padding flex items-center justify-center header-padding">
-        <a href="/" class="hover:opacity-80 transition-opacity">
+    <header class="surface elevation-1 sticky top-0 z-10" style="width: 100%;">
+      <div style="max-width: 80rem; margin: 0 auto; padding: 2rem 1.5rem;">
+        <a href="/" class="hover:opacity-80 transition-opacity" style="display: flex; justify-content: center;">
           <Logo size="small" />
         </a>
       </div>
     </header>
 
     <!-- Privacy Policy Content -->
-    <main class="max-w-5xl mx-auto page-padding main-padding">
-      <!-- Surface container for better readability -->
-      <article class="surface elevation-1 rounded-3xl privacy-content article-padding">
-        <Fragment set:html={privacyHtml} />
-      </article>
-
-      <!-- Footer -->
-      <footer class="border-t border-[var(--color-outline-variant)] dark:border-[var(--color-outline-variant-dark)] text-center footer-spacing">
-        <p class="body-large text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed footer-text">
-          Questions about this policy? Email us at{' '}
-          <a
-            href="mailto:privacy@subscripto.io"
-            class="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:underline font-medium"
-          >
-            privacy@subscripto.io
-          </a>
-        </p>
-        <p class="body-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)]">
-          © 2024 Subscripto. All rights reserved.
-        </p>
-      </footer>
+    <main style="width: 100%;">
+      <div style="max-width: 80rem; margin: 0 auto; padding: 5rem 1.5rem 8rem 1.5rem;">
+        <!-- Surface container for better readability -->
+        <article class="surface elevation-1 rounded-3xl privacy-content" style="padding: 4rem;">
+          <Fragment set:html={privacyHtml} />
+        </article>
+        <!-- Footer -->
+        <footer class="border-t border-[var(--color-outline-variant)] dark:border-[var(--color-outline-variant-dark)] text-center" style="margin-top: 8rem; padding-top: 3rem;">
+          <p class="body-large text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)] leading-relaxed footer-text">
+            Questions about this policy? Email us at{' '}
+            <a
+              href="mailto:support@subscriptin.com"
+              class="text-[var(--color-primary)] dark:text-[var(--color-primary-dark)] hover:underline font-medium"
+            >
+              support@subscriptin.com
+            </a>
+          </p>
+          <p class="body-medium text-[var(--color-on-surface-variant)] dark:text-[var(--color-on-surface-variant-dark)]">
+            © 2024 Subscriptin. All rights reserved.
+          </p>
+        </footer>
+      </div>
     </main>
   </div>
 </BaseLayout>
 
-<style>
+<style is:global>
   /* Page padding */
   .page-padding {
     padding-left: 1.5rem;
@@ -167,63 +155,80 @@ const privacyHtml = markdownToHtml(privacyMd);
   }
 
   .privacy-content h1 {
-    font-size: 2.25rem;
-    line-height: 2.75rem;
-    font-weight: 400;
-    margin-bottom: 1rem;
-    text-align: center;
-    color: var(--color-primary);
+    font-size: 2.25rem !important;
+    line-height: 2.75rem !important;
+    font-weight: 400 !important;
+    margin-bottom: 1rem !important;
+    margin-top: 0 !important;
+    text-align: center !important;
+    color: var(--color-primary) !important;
   }
 
   @media (prefers-color-scheme: dark) {
     .privacy-content h1 {
-      color: var(--color-primary-dark);
+      color: var(--color-primary-dark) !important;
     }
   }
 
   .privacy-content h2 {
-    font-size: 1.5rem;
-    line-height: 2rem;
-    font-weight: 400;
-    margin-top: 4rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--color-outline-variant);
-    color: var(--color-on-surface);
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+    font-weight: 400 !important;
+    margin-top: 4rem !important;
+    margin-bottom: 2rem !important;
+    padding-bottom: 1rem !important;
+    border-bottom: 1px solid var(--color-outline-variant) !important;
+    color: var(--color-on-surface) !important;
   }
 
   @media (prefers-color-scheme: dark) {
     .privacy-content h2 {
-      color: var(--color-on-surface-dark);
-      border-bottom-color: var(--color-outline-variant-dark);
+      color: var(--color-on-surface-dark) !important;
+      border-bottom-color: var(--color-outline-variant-dark) !important;
     }
   }
 
   .privacy-content h3 {
-    font-size: 1.125rem;
-    line-height: 1.5rem;
-    font-weight: 500;
-    margin-top: 2.5rem;
-    margin-bottom: 1.5rem;
-    color: var(--color-primary);
+    font-size: 1.125rem !important;
+    line-height: 1.5rem !important;
+    font-weight: 500 !important;
+    margin-top: 2.5rem !important;
+    margin-bottom: 1.5rem !important;
+    color: var(--color-primary) !important;
   }
 
   @media (prefers-color-scheme: dark) {
     .privacy-content h3 {
-      color: var(--color-primary-dark);
+      color: var(--color-primary-dark) !important;
+    }
+  }
+
+  .privacy-content h4 {
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+    font-weight: 500 !important;
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
+    color: var(--color-on-surface) !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .privacy-content h4 {
+      color: var(--color-on-surface-dark) !important;
     }
   }
 
   .privacy-content p {
-    font-size: 1rem;
-    line-height: 1.875rem;
-    margin-bottom: 2rem;
-    color: var(--color-on-surface-variant);
+    font-size: 1rem !important;
+    line-height: 1.875rem !important;
+    margin-bottom: 1.5rem !important;
+    margin-top: 0 !important;
+    color: var(--color-on-surface-variant) !important;
   }
 
   @media (prefers-color-scheme: dark) {
     .privacy-content p {
-      color: var(--color-on-surface-variant-dark);
+      color: var(--color-on-surface-variant-dark) !important;
     }
   }
 
@@ -264,6 +269,158 @@ const privacyHtml = markdownToHtml(privacyMd);
   @media (prefers-color-scheme: dark) {
     .privacy-content hr {
       border-top-color: var(--color-outline-variant-dark);
+    }
+  }
+
+  /* Lists */
+  .privacy-content ul,
+  .privacy-content ol {
+    margin-bottom: 1.5rem !important;
+    margin-top: 0.5rem !important;
+    padding-left: 1.5rem !important;
+    color: var(--color-on-surface-variant) !important;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .privacy-content ul,
+    .privacy-content ol {
+      color: var(--color-on-surface-variant-dark) !important;
+    }
+  }
+
+  .privacy-content ul {
+    list-style-type: disc !important;
+  }
+
+  .privacy-content ol {
+    list-style-type: decimal !important;
+  }
+
+  .privacy-content li {
+    margin-bottom: 0.5rem !important;
+    line-height: 1.75rem !important;
+    font-size: 1rem !important;
+  }
+
+  .privacy-content li:last-child {
+    margin-bottom: 0 !important;
+  }
+
+  .privacy-content li > ul,
+  .privacy-content li > ol {
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Nested lists */
+  .privacy-content ul ul {
+    list-style-type: circle;
+  }
+
+  .privacy-content ul ul ul {
+    list-style-type: square;
+  }
+
+  /* Tables */
+  .privacy-content table {
+    width: 100%;
+    margin: 2rem 0;
+    border-collapse: collapse;
+    overflow-x: auto;
+    display: block;
+  }
+
+  .privacy-content table thead {
+    background-color: var(--color-surface-variant);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .privacy-content table thead {
+      background-color: var(--color-surface-variant-dark);
+    }
+  }
+
+  .privacy-content table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 500;
+    border-bottom: 2px solid var(--color-outline-variant);
+    color: var(--color-on-surface);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .privacy-content table th {
+      color: var(--color-on-surface-dark);
+      border-bottom-color: var(--color-outline-variant-dark);
+    }
+  }
+
+  .privacy-content table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-outline-variant);
+    color: var(--color-on-surface-variant);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .privacy-content table td {
+      color: var(--color-on-surface-variant-dark);
+      border-bottom-color: var(--color-outline-variant-dark);
+    }
+  }
+
+  .privacy-content table tbody tr:hover {
+    background-color: rgba(var(--color-primary-rgb), 0.05);
+  }
+
+  /* Code blocks */
+  .privacy-content code {
+    background-color: var(--color-surface-variant);
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.875rem;
+    color: var(--color-on-surface);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .privacy-content code {
+      background-color: var(--color-surface-variant-dark);
+      color: var(--color-on-surface-dark);
+    }
+  }
+
+  .privacy-content pre {
+    background-color: var(--color-surface-variant);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 2rem 0;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .privacy-content pre {
+      background-color: var(--color-surface-variant-dark);
+    }
+  }
+
+  .privacy-content pre code {
+    background-color: transparent;
+    padding: 0;
+  }
+
+  /* Blockquotes */
+  .privacy-content blockquote {
+    margin: 2rem 0;
+    padding-left: 1.5rem;
+    border-left: 4px solid var(--color-primary);
+    color: var(--color-on-surface-variant);
+    font-style: italic;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .privacy-content blockquote {
+      border-left-color: var(--color-primary-dark);
+      color: var(--color-on-surface-variant-dark);
     }
   }
 
@@ -319,9 +476,42 @@ const privacyHtml = markdownToHtml(privacyMd);
       line-height: 1.5rem;
     }
 
+    .privacy-content h4 {
+      font-size: 0.9375rem;
+      line-height: 1.375rem;
+    }
+
     .privacy-content p {
       font-size: 0.9375rem;
       line-height: 1.625rem;
+    }
+
+    .privacy-content li {
+      font-size: 0.9375rem;
+      line-height: 1.625rem;
+    }
+
+    .privacy-content table {
+      font-size: 0.875rem;
+    }
+
+    .privacy-content table th,
+    .privacy-content table td {
+      padding: 0.75rem 0.5rem;
+    }
+
+    .privacy-content ul,
+    .privacy-content ol {
+      padding-left: 1.25rem;
+    }
+
+    .privacy-content pre {
+      padding: 1rem;
+      font-size: 0.8125rem;
+    }
+
+    .privacy-content code {
+      font-size: 0.8125rem;
     }
   }
 </style>
